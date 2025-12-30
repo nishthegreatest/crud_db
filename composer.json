@@ -1,0 +1,17 @@
+{
+    "name": "dell/crud_db",
+    "autoload": {
+        "psr-4": {
+            "Dell\\CrudDb\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "nishthegreatest",
+            "email": "danishsary4@gmail.com"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.6"
+    }
+}
