@@ -36,7 +36,7 @@ if ($method !== 'GET') {
 }
 ?>
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -46,19 +46,73 @@ if ($method !== 'GET') {
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.12/dist/full.min.css" rel="stylesheet" type="text/css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --app-bg: linear-gradient(135deg, #f0f7ff 0%, #f6fbff 45%, #f0fff7 100%);
+            --app-text: #0f172a;
+            --app-card: #ffffff;
+            --app-border: #e2e8f0;
+            --app-muted: #64748b;
+            --app-accent: #2563eb;
+        }
+
+        body.app-surface {
+            background: var(--app-bg);
+            color: var(--app-text);
+        }
+
+        .app-card {
+            background: var(--app-card);
+            border-color: var(--app-border);
+            box-shadow: 0 20px 40px -30px rgba(15, 23, 42, 0.4);
+        }
+
+        .app-muted {
+            color: var(--app-muted);
+        }
+
+        .app-accent {
+            color: var(--app-accent);
+        }
+
+        .app-pagination {
+            color: var(--app-text);
+            border: 1px solid var(--app-border);
+            background: transparent;
+        }
+
+        .app-pagination:hover {
+            background: rgba(148, 163, 184, 0.12);
+        }
+
+        .app-pagination-active {
+            background: var(--app-accent);
+            color: #ffffff;
+            border: none;
+        }
+
+        .app-pagination-active:hover {
+            background: var(--app-accent);
+        }
+
+        .app-pagination:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-800">
+<body class="min-h-screen app-surface">
     <main class="mx-auto flex min-h-screen max-w-6xl flex-col gap-8 px-4 py-8 sm:gap-10 sm:py-12 font-['Space_Grotesk']">
-        <section class="space-y-3 sm:space-y-4">
-            <span class="text-xs font-semibold uppercase tracking-[0.35em] text-blue-500">User Studio</span>
+        <section class="flex flex-wrap items-center justify-between gap-3">
+            <span class="text-xs font-semibold uppercase tracking-[0.35em] app-accent">User Studio</span>
         </section>
 
         <div class="space-y-2">
-        <section class="rounded-2xl border border-base-200 bg-base-100 p-4 shadow-xl shadow-base-200 sm:p-6">
+        <section class="rounded-2xl border p-4 app-card sm:p-6">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 class="text-xl font-semibold text-yellow-600">Directory</h2>
-                    <p class="text-xs text-slate-500 sm:text-sm" id="status">Ready when you are.</p>
+                    <p class="text-xs app-muted sm:text-sm" id="status">Ready when you are.</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-3">
                     <span class="badge badge-secondary" id="count-pill">0 users</span>
@@ -67,51 +121,51 @@ if ($method !== 'GET') {
             </div>
 
                 <div class="mt-5 overflow-x-auto">
-                    <table class="table table-zebra text-slate-700 text-xs sm:text-sm md:text-base min-w-[720px]">
+                    <table class="table table-zebra text-xs sm:text-sm md:text-base min-w-[720px]">
                     <thead>
                         <tr>
-                            <th class="text-xs uppercase tracking-widest text-slate-300">ID</th>
-                            <th class="text-xs uppercase tracking-widest text-slate-300">Full name</th>
-                            <th class="text-xs uppercase tracking-widest text-slate-300">Email</th>
-                            <th class="text-xs uppercase tracking-widest text-slate-300">Password</th>
-                            <th class="text-xs uppercase tracking-widest text-slate-300">Actions</th>
+                            <th class="text-xs uppercase tracking-widest app-muted">ID</th>
+                            <th class="text-xs uppercase tracking-widest app-muted">Full name</th>
+                            <th class="text-xs uppercase tracking-widest app-muted">Email</th>
+                            <th class="text-xs uppercase tracking-widest app-muted">Password</th>
+                            <th class="text-xs uppercase tracking-widest app-muted">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="user-tbody"></tbody>
                 </table>
             </div>
         </section>
-        <div class="flex flex-wrap items-center justify-center gap-2 text-slate-800 sm:justify-end" id="pagination"></div>
+        <div class="flex flex-wrap items-center justify-center gap-2 sm:justify-end" id="pagination"></div>
         </div>
     </main>
 
     <dialog id="user-modal" class="modal">
-        <div class="modal-box w-[95vw] max-w-2xl text-slate-100">
+        <div class="modal-box w-[95vw] max-w-2xl">
             <form method="dialog">
                 <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" aria-label="Close">x</button>
             </form>
             <div class="space-y-2">
                 <h3 class="text-lg font-semibold" id="modal-title">New / Edit user</h3>
-                <p class="text-sm text-slate-300">Add or adjust user details and save to update the table.</p>
+                <p class="text-sm app-muted">Add or adjust user details and save to update the table.</p>
             </div>
             <form class="mt-4 space-y-4" id="user-form">
                 <input type="hidden" id="user-id" name="id">
                 <div class="grid gap-4 sm:grid-cols-2">
                     <label class="form-control">
                         <div class="label">
-                            <span class="label-text text-slate-200">Full name</span>
+                            <span class="label-text app-muted">Full name</span>
                         </div>
                         <input class="input input-bordered w-full" type="text" id="name" name="name" placeholder="Ada Lovelace" required>
                     </label>
                     <label class="form-control">
                         <div class="label">
-                            <span class="label-text text-slate-200">Email</span>
+                            <span class="label-text app-muted">Email</span>
                         </div>
                         <input class="input input-bordered w-full" type="email" id="email" name="email" placeholder="ada@analytical.engine" required>
                     </label>
                     <label class="form-control sm:col-span-2">
                         <div class="label">
-                            <span class="label-text text-slate-200">Password</span>
+                            <span class="label-text app-muted">Password</span>
                         </div>
                         <input class="input input-bordered w-full" type="password" id="password" name="password" placeholder="********" required>
                     </label>
@@ -189,7 +243,7 @@ if ($method !== 'GET') {
             }
 
             const prevButton = document.createElement('button');
-            prevButton.className = 'btn btn-outline btn-primary btn-sm disabled:text-slate-400 disabled:bg-slate-200 disabled:border-slate-200';
+            prevButton.className = 'btn btn-sm app-pagination';
             prevButton.textContent = 'Previous';
             prevButton.disabled = currentPage === 1;
             prevButton.addEventListener('click', () => {
@@ -201,8 +255,8 @@ if ($method !== 'GET') {
             for (let page = 1; page <= totalPages; page += 1) {
                 const pageButton = document.createElement('button');
                 pageButton.className = page === currentPage
-                    ? 'btn btn-sm bg-slate-900 text-amber-200 hover:bg-slate-800 border-none'
-                    : 'btn btn-sm btn-ghost text-slate-700 hover:text-slate-900';
+                    ? 'btn btn-sm app-pagination-active'
+                    : 'btn btn-sm app-pagination';
                 pageButton.textContent = page;
                 pageButton.addEventListener('click', () => {
                     currentPage = page;
@@ -212,7 +266,7 @@ if ($method !== 'GET') {
             }
 
             const nextButton = document.createElement('button');
-            nextButton.className = 'btn btn-outline btn-primary btn-sm disabled:text-slate-400 disabled:bg-slate-200 disabled:border-slate-200';
+            nextButton.className = 'btn btn-sm app-pagination';
             nextButton.textContent = 'Next';
             nextButton.disabled = currentPage === totalPages;
             nextButton.addEventListener('click', () => {
@@ -247,16 +301,16 @@ if ($method !== 'GET') {
             pageUsers.forEach((user) => {
                 const displayName = user.fullname || user.name || 'Unnamed user';
                 const row = document.createElement('tr');
-                row.className = 'text-slate-700';
+                row.className = 'text-base-content';
                 row.dataset.password = user.password || '';
-                const maskedPassword = user.password ? '********' : '—';
+                const maskedPassword = user.password ? '********' : '-';
                 row.innerHTML = `
                     <td>${user.id}</td>
-                    <td class="font-medium text-slate-800">${displayName}</td>
+                    <td class="font-medium text-base-content">${displayName}</td>
                     <td>${user.email}</td>
                     <td>
                         <div class="flex items-center gap-2">
-                            <span class="font-mono text-slate-700" data-password>${maskedPassword}</span>
+                            <span class="font-mono text-base-content" data-password>${maskedPassword}</span>
                             <button class="btn btn-xs btn-ghost" type="button" data-action="toggle-password" aria-label="Show password">
                                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-4 w-4">
                                     <path fill="currentColor" d="M12 5c5.05 0 9.09 3.15 10.5 7-1.41 3.85-5.45 7-10.5 7S2.91 15.85 1.5 12C2.91 8.15 6.95 5 12 5zm0 2c-3.54 0-6.75 2.06-8.14 5 1.39 2.94 4.6 5 8.14 5s6.75-2.06 8.14-5C18.75 9.06 15.54 7 12 7zm0 2.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z"/>
