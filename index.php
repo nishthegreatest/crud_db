@@ -67,7 +67,7 @@ if ($method !== 'GET') {
             </div>
 
                 <div class="mt-5 overflow-x-auto">
-                    <table class="table table-zebra text-slate-100 text-xs sm:text-sm md:text-base min-w-[720px]">
+                    <table class="table table-zebra text-slate-700 text-xs sm:text-sm md:text-base min-w-[720px]">
                     <thead>
                         <tr>
                             <th class="text-xs uppercase tracking-widest text-slate-300">ID</th>
@@ -247,16 +247,16 @@ if ($method !== 'GET') {
             pageUsers.forEach((user) => {
                 const displayName = user.fullname || user.name || 'Unnamed user';
                 const row = document.createElement('tr');
-                row.className = 'text-slate-100';
+                row.className = 'text-slate-700';
                 row.dataset.password = user.password || '';
                 const maskedPassword = user.password ? '********' : '—';
                 row.innerHTML = `
                     <td>${user.id}</td>
-                    <td class="font-medium text-slate-100">${displayName}</td>
+                    <td class="font-medium text-slate-800">${displayName}</td>
                     <td>${user.email}</td>
                     <td>
                         <div class="flex items-center gap-2">
-                            <span class="font-mono text-slate-200" data-password>${maskedPassword}</span>
+                            <span class="font-mono text-slate-700" data-password>${maskedPassword}</span>
                             <button class="btn btn-xs btn-ghost" type="button" data-action="toggle-password" aria-label="Show password">
                                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-4 w-4">
                                     <path fill="currentColor" d="M12 5c5.05 0 9.09 3.15 10.5 7-1.41 3.85-5.45 7-10.5 7S2.91 15.85 1.5 12C2.91 8.15 6.95 5 12 5zm0 2c-3.54 0-6.75 2.06-8.14 5 1.39 2.94 4.6 5 8.14 5s6.75-2.06 8.14-5C18.75 9.06 15.54 7 12 7zm0 2.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z"/>
