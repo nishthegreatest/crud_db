@@ -4,23 +4,31 @@ require_once 'Database.php';
 class UserRepository {
     public function getAll() {
         return Database::getConnect()
-        ->query("SELECT * FROM users ORDER BY id ASC")
+        ->query("SELECT id, fullname AS name, email, password FROM users ORDER BY id ASC")
         ->fetchAll();
     }
 
-    public function create($fullname, $email, $password) {
+    public function create($name, $email, $password) {
         $stmt = Database::getConnect()
-        ->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
-        return $stmt->execute([$fullname, $email, $password]);
+        ->prepare("INSERT INTO users (fullname, email, password) VALUES (?, ?, ?)");
+        return $stmt->execute([$name, $email, $password]);
     }
 
-    public function update($id, $fullname, $email, $password) {
+    public function update($id, $name, $email, $password) {
         $stmt = Database::getConnect()->prepare(
             "UPDATE users
             SET fullname = ?, email = ?, password = ?
             WHERE id = ?"
         );
 
-        return $stmt->execute([$fullname, $email, $password, $id]);
+        return $stmt->execute([$name, $email, $password, $id]);
+    }
+
+    public function delete($id) {
+        $stmt = Database::getConnect()->prepare(
+            "DELETE FROM users WHERE id = ?"
+        );
+
+        return $stmt->execute([$id]);
     }
 }

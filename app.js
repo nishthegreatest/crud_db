@@ -15,6 +15,15 @@ const fields = {
     password: document.getElementById('password')
 };
 
+async function readJson(response) {
+    const text = await response.text();
+    try {
+        return { data: JSON.parse(text), text };
+    } catch (error) {
+        return { data: null, text };
+    }
+}
+
 function setStatus(message, tone = 'muted') {
     status.textContent = message;
     status.classList.toggle('text-error', tone === 'error');
@@ -137,7 +146,10 @@ function renderUsers(users) {
                 </div>
             </td>
             <td>
-                <button class="btn btn-sm btn-outline" data-action="edit" data-id="${user.id}">Edit</button>
+                <div class="flex flex-wrap gap-2">
+                    <button class="btn btn-sm btn-outline" data-action="edit" data-id="${user.id}">Edit</button>
+                    <button class="btn btn-sm btn-error btn-outline" data-action="delete" data-id="${user.id}">Delete</button>
+                </div>
             </td>
         `;
         userBody.appendChild(row);
@@ -150,7 +162,10 @@ async function loadUsers() {
     setStatus('Loading users...');
     try {
         const response = await fetch(apiUrl);
-        const data = await response.json();
+        const { data, text } = await readJson(response);
+        if (!response.ok) {
+            throw new Error((data && data.message) || text || 'Request failed');
+        }
         allUsers = Array.isArray(data) ? data : [];
         renderUsers(allUsers);
         setStatus('Directory synced.');
@@ -178,9 +193,9 @@ async function submitUser(event) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-        const data = await response.json();
+        const { data, text } = await readJson(response);
         if (!response.ok) {
-            throw new Error(data.message || 'Request failed');
+            throw new Error((data && data.message) || text || 'Request failed');
         }
         if (isEdit && window.Swal) {
             Swal.fire({
@@ -192,6 +207,25 @@ async function submitUser(event) {
         setStatus(isEdit ? 'User updated.' : 'User created.');
         clearForm();
         closeModal();
+        await loadUsers();
+    } catch (error) {
+        setStatus(error.message || 'Something went wrong.', 'error');
+    }
+}
+
+async function deleteUser(id) {
+    setStatus('Deleting user...');
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id })
+        });
+        const { data, text } = await readJson(response);
+        if (!response.ok) {
+            throw new Error((data && data.message) || text || 'Request failed');
+        }
+        setStatus('User deleted.');
         await loadUsers();
     } catch (error) {
         setStatus(error.message || 'Something went wrong.', 'error');
@@ -228,20 +262,42 @@ userBody.addEventListener('click', (event) => {
     }
 
     const button = event.target.closest('button[data-action="edit"]');
-    if (!button) return;
+    if (button) {
+        const row = button.closest('tr');
+        const cells = row.querySelectorAll('td');
+        const id = button.dataset.id;
+        const name = cells[1].textContent;
+        const email = cells[2].textContent;
 
-    const row = button.closest('tr');
-    const cells = row.querySelectorAll('td');
-    const id = button.dataset.id;
-    const name = cells[1].textContent;
-    const email = cells[2].textContent;
+        fields.id.value = id;
+        fields.name.value = name;
+        fields.email.value = email;
+        fields.password.value = '';
+        setMode('edit');
+        openModal();
+        return;
+    }
 
-    fields.id.value = id;
-    fields.name.value = name;
-    fields.email.value = email;
-    fields.password.value = '';
-    setMode('edit');
-    openModal();
+    const deleteButton = event.target.closest('button[data-action="delete"]');
+    if (!deleteButton) return;
+
+    const deleteId = deleteButton.dataset.id;
+    if (window.Swal) {
+        Swal.fire({
+            title: 'Delete user?',
+            text: 'This action cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Delete',
+            confirmButtonColor: '#dc2626'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteUser(deleteId);
+            }
+        });
+    } else if (confirm('Delete this user?')) {
+        deleteUser(deleteId);
+    }
 });
 
 addBtn.addEventListener('click', () => {

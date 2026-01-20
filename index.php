@@ -10,7 +10,7 @@ function send_json_headers() {
     header("Content-Type: application/json");
     header("Access-Control-Allow-Origin: *");
     header("Access-Control-Allow-Headers: Content-Type");
-    header("Access-Control-Allow-Methods: GET, POST, PUT");
+    header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
 }
 
 if ($isApi) {
@@ -22,6 +22,8 @@ if ($isApi) {
         $controller->store();
     } else if ($method === 'PUT') {
         $controller->update();
+    } else if ($method === 'DELETE') {
+        $controller->delete();
     } else {
         http_response_code(405);
         echo json_encode(["message" => "Method not allowed"]);

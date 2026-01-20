@@ -4,6 +4,10 @@ class Database {
     private static $pdo;
 
     public static function getConnect() {
+        if (self::$pdo instanceof PDO) {
+            return self::$pdo;
+        }
+
         try {
             self::$pdo = new PDO(
                 "pgsql:host=ep-fragrant-poetry-a11ds5hw-pooler.ap-southeast-1.aws.neon.tech;dbname=neondb; sslmode=require;channel_binding=require",
@@ -15,7 +19,7 @@ class Database {
                 ]
             );
         } catch (PDOException $e) {
-            die("Connection failed: " . $e->getMessage());
+            throw $e;
         }
 
         return self::$pdo;
